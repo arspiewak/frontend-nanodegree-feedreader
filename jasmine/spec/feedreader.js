@@ -139,7 +139,7 @@ $(function() {
          * should have two expectations: does the menu display when
          * clicked and does it hide when clicked again.
          */
-        describe('when clicked', function() {
+        describe('when clicked...', function() {
 
             /* Set the hide toggle at first ... */
             $('body').addClass('menu-hidden');
@@ -169,11 +169,11 @@ $(function() {
                 }, 500);
             });
 
-            it('once shows the menu', function() {
+            it('once: shows the menu', function() {
                 expect(isOnscreen(menu[0])).toBe(true);
             });
 
-            it('twice hides the menu', function() {
+            it('twice: hides the menu', function() {
                 expect(isOnscreen(menu[0])).toBe(false);
             });
         }); /* describe when clicked */
@@ -195,12 +195,49 @@ $(function() {
         it('display at least one entry', function() {
             expect($('.feed .entry').length).toBeGreaterThan(0);
         });
-
     });
-    /* TODO: Write a new test suite named "New Feed Selection"
 
+    /* TODO: Write a new test suite named "New Feed Selection" */
+    describe('New Feed Selection', function () {
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        var feedNo = 0;
+        beforeEach(function (done) {
+            loadFeed(feedNo, done);
+            /* Advance the feedNo index to get another feed for the
+             * second spec */
+            feedNo++;
+        });
+
+        /* How to test that we've loaded a different feed? Let's mush
+         * together all the headings into a single string. If that's
+         * the same from feed to feed (comment out feedNo++ above) we
+         * didn't load a new one (just in case two feeds have the
+         * same title ;-). */
+        var holdFeed;
+        function mashFeedEntries (selector) {
+            var arr = new Array();
+            selector.each(function() {
+                arr.push(this.innerText);
+            });
+            return arr.join();
+        }
+
+        afterEach(function () {
+            holdFeed = mashFeedEntries($('.entry h2'));
+        });
+
+        /* First spec repeats the prior test (it's really a throwaway
+         * to save values and get to the second load) */
+        it('loads a feed with its first index', function() {
+            expect($('.feed .entry').length).toBeGreaterThan(0);
+        });
+
+        it('loads a different feed with its second index', function() {
+            expect(mashFeedEntries($('.entry h2'))).not.toBe(holdFeed);
+        });
+    });
+
 }());
