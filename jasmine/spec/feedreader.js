@@ -27,7 +27,7 @@ $(function() {
         });
 
 
-        /* TODO: Write a test that loops through each feed
+        /* DONE: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
@@ -61,7 +61,7 @@ $(function() {
         });
 
 
-        /* TODO: Write a test that loops through each feed
+        /* DONE: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
@@ -97,7 +97,7 @@ $(function() {
     }); /* describe RSS feeds */
 
 
-    /* TODO: Write a new test suite named "The menu" */
+    /* DONE: Write a new test suite named "The menu" */
     describe('The menu', function() {
         var menu = $('.slide-menu');    /* Menu's DOM container */
 
@@ -119,13 +119,14 @@ $(function() {
                 (rect.bottom > wTop) && (rect.top < wBottom);
         }
 
-        /* TODO: Write a test that ensures the menu element is
+        /* DONE: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
 
         it('starts with display and visibility turned on', function() {
+            expect(menu.length).toBe(1);    // exactly one slide-menu
             expect(menu.attr('display')).not.toBe('none');
             expect(menu.attr('visibility')).not.toBe('hidden');
         })
@@ -134,7 +135,11 @@ $(function() {
             expect(isOnscreen(menu[0])).toBe(false);
         });
 
-        /* TODO: Write a test that ensures the menu changes
+        it('has one menu-icon-link to control it', function () {
+            expect($('.menu-icon-link').length).toBe(1);
+        });
+
+        /* DONE: Write a test that ensures the menu changes
          * visibility when the menu icon is clicked. This test
          * should have two expectations: does the menu display when
          * clicked and does it hide when clicked again.
@@ -142,7 +147,9 @@ $(function() {
         describe('when clicked...', function() {
 
             /* Set the hide toggle at first ... */
-            $('body').addClass('menu-hidden');
+            beforeAll(function () {
+                $('body').addClass('menu-hidden');
+            })
 
             /* ... and after each test. */
             afterEach(function() {
@@ -151,7 +158,6 @@ $(function() {
 
             /* First test clicks once */
             var clickCount = 1;
-
             beforeEach(function (done) {
                 /* Simulate the needed number of clicks */
                 for (var i = 0; i < clickCount; i++) {
@@ -163,7 +169,7 @@ $(function() {
                  * spec even though it was after it in the script. */
                 clickCount++;
                 /* Wait to start the spec till animation from the click
-                 * finishes. */
+                 * finishes (.2 sec each click, plus .1 sec margin). */
                 setTimeout(function() {
                     done();
                 }, 500);
@@ -180,9 +186,9 @@ $(function() {
 
     }); /* describe the menu */
 
-    /* TODO: Write a new test suite named "Initial Entries" */
+    /* DONE: Write a new test suite named "Initial Entries" */
     describe('Initial Entries', function() {
-        /* TODO: Write a test that ensures when the loadFeed
+        /* DONE: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          * Remember, loadFeed() is asynchronous so this test will require
@@ -197,9 +203,9 @@ $(function() {
         });
     });
 
-    /* TODO: Write a new test suite named "New Feed Selection" */
+    /* DONE: Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function () {
-        /* TODO: Write a test that ensures when a new feed is loaded
+        /* DONE: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
@@ -217,7 +223,7 @@ $(function() {
          * didn't load a new one (just in case two feeds have the
          * same title ;-). */
         var holdFeed;
-        function mashFeedEntries (selector) {
+        function mashTextValues(selector) {
             var arr = new Array();
             selector.each(function() {
                 arr.push(this.innerText);
@@ -226,8 +232,13 @@ $(function() {
         }
 
         afterEach(function () {
-            holdFeed = mashFeedEntries($('.entry h2'));
+            holdFeed = mashTextValues($('.entry h2'));
         });
+
+        /* Return to the initial load */
+        afterAll(function () {
+            loadFeed(0);
+        })
 
         /* First spec repeats the prior test (it's really a throwaway
          * to save values and get to the second load) */
@@ -236,8 +247,63 @@ $(function() {
         });
 
         it('loads a different feed with its second index', function() {
-            expect(mashFeedEntries($('.entry h2'))).not.toBe(holdFeed);
+            expect(mashTextValues($('.entry h2'))).not.toBe(holdFeed);
         });
     });
+
+    /* This last suite combines many of the prior tests to verify that
+     * all feeds are performing as expected. To ensure that each test
+     * suite is independent, I have defined components that are shared
+     * with other tests (e.g., mashTextValues) separately inside each
+     * suite's context.
+     */
+    describe('All Feeds display at least one entry', function() {
+        afterAll(function () {
+            loadFeed(0);
+        });
+        var feed, name, i, len;
+        /* feedNo must be managed inside beforeEach's function; inside
+         * that function, i always equals len + 1. */
+        var feedNo = 0;
+
+        /* When a feed fails, the app silently fails to change (the
+         * prior feed remains displayed). To detect this behavior, we
+         * have to check that the feed has changed. */
+        var holdFeed = '';
+        function mashTextValues(selector) {
+            var arr = new Array();
+            selector.each(function() {
+                arr.push(this.innerText);
+            });
+            return arr.join();
+        }
+
+        /* Loop through the feeds */
+        for (i = 0, len = allFeeds.length; i < len; i++) {
+            feed = allFeeds[i];
+            name = feed.name;
+
+            /* Document each feed with its own describe() */
+            describe(name + ' feed', function() {
+                /* Load the feed asynchronously */
+                beforeEach(function (done) {
+                    loadFeed(feedNo++, done);
+                });
+
+                /* Retain the displayed feed contents for comparison
+                 * with the next feed */
+                afterEach(function() {
+                    holdFeed = mashTextValues($('.entry h2'));
+                });
+
+                /* And here are the tests for this spec */
+                it('displays new entries', function () {
+                    expect($('.feed .entry').length).toBeGreaterThan(0);
+                    expect(mashTextValues($('.entry h2'))).not.toBe(holdFeed);
+                });
+
+            }); /* describe name feed */
+        } /* for feeds */
+    }); /* describe All Feeds */
 
 }());
