@@ -115,16 +115,9 @@ $(function() {
              * visible. We don't test if the whole thing's visible,
              * which could be a problem on a small viewport. */
             var rect = element.getBoundingClientRect();
-        console.log(wLeft, wRight, wTop, wBottom);
-        console.log('A', element.getBoundingClientRect());
-           return (rect.right > wLeft) && (rect.left < wRight) &&
+            return (rect.right > wLeft) && (rect.left < wRight) &&
                 (rect.bottom > wTop) && (rect.top < wBottom);
         }
-
-        beforeEach(function () {
-            $.fx.off = true;
-        });
-
 
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
@@ -146,18 +139,12 @@ $(function() {
          * should have two expectations: does the menu display when
          * clicked and does it hide when clicked again.
          */
-        function timestamp (a) {
-            var d = new Date();
-            var str = a + ' ' + d.toISOString();
-            console.log(str);
-        }
-
         describe('when clicked', function() {
 
             /* Set the hide toggle at first ... */
             $('body').addClass('menu-hidden');
 
-            /* ... and after each test */
+            /* ... and after each test. */
             afterEach(function() {
                 $('body').addClass('menu-hidden');
             });
@@ -166,6 +153,7 @@ $(function() {
             var clickCount = 1;
 
             beforeEach(function (done) {
+                /* Simulate the needed number of clicks */
                 for (var i = 0; i < clickCount; i++) {
                     timestamp('a');
                     $('.menu-icon-link').trigger('click');
@@ -175,8 +163,8 @@ $(function() {
                  * the second assignment was executed before the first
                  * spec even though it was after it in the script. */
                 clickCount++;
-                /* Wait to start the 'it' test till the animation
-                 * from the click finishes. */
+                /* Wait to start the spec till animation from the click
+                 * finishes. */
                 setTimeout(function() {
                     done();
                 }, 500);
