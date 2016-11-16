@@ -130,7 +130,7 @@ $(function() {
             expect(menu.attr('visibility')).not.toBe('hidden');
         })
 
-        it('starts not visible', function () {
+        it('starts offscreen', function () {
             expect(isOnscreen(menu[0])).toBe(false);
         });
 
@@ -155,7 +155,6 @@ $(function() {
             beforeEach(function (done) {
                 /* Simulate the needed number of clicks */
                 for (var i = 0; i < clickCount; i++) {
-                    timestamp('a');
                     $('.menu-icon-link').trigger('click');
                 }
                 /* Second execution clicks twice. I tried to do this
@@ -171,12 +170,10 @@ $(function() {
             });
 
             it('once shows the menu', function() {
-                timestamp('b');
                 expect(isOnscreen(menu[0])).toBe(true);
             });
 
             it('twice hides the menu', function() {
-                timestamp('c');
                 expect(isOnscreen(menu[0])).toBe(false);
             });
         }); /* describe when clicked */
@@ -184,14 +181,22 @@ $(function() {
     }); /* describe the menu */
 
     /* TODO: Write a new test suite named "Initial Entries" */
-
+    describe('Initial Entries', function() {
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
+        beforeEach(function (done) {
+            loadFeed(0, done);
+        });
 
+        it('display at least one entry', function() {
+            expect($('.feed .entry').length).toBeGreaterThan(0);
+        });
+
+    });
     /* TODO: Write a new test suite named "New Feed Selection"
 
         /* TODO: Write a test that ensures when a new feed is loaded
