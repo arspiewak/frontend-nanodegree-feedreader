@@ -99,25 +99,6 @@ $(function() {
 
     /* DONE: Write a new test suite named "The menu" */
     describe('The menu', function() {
-        var menu = $('.slide-menu');    /* Menu's DOM container */
-
-        /* The menus's visibility is manipulated by sliding it out of
-         * the window viewport (to the left) or back into view, on top of
-         * the main section. To check its visibility, we'll need the
-         * coordinates of the window's "frame". */
-         var wLeft = window.screenLeft;
-         var wTop = window.screenTop;
-         var wRight = wLeft + window.outerWidth;
-         var wBottom = wTop + window.outerHeight;
-
-         function isOnscreen(element) {
-            /* This function checks if some part of the element is
-             * visible. We don't test if the whole thing's visible,
-             * which could be a problem on a small viewport. */
-            var rect = element.getBoundingClientRect();
-            return (rect.right > wLeft) && (rect.left < wRight) &&
-                (rect.bottom > wTop) && (rect.top < wBottom);
-        }
 
         /* DONE: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
@@ -125,14 +106,23 @@ $(function() {
          * hiding/showing of the menu element.
          */
 
+
+        /* The menus's visibility toggles by sliding in and out of the
+         * viewport (to/from the left). To see if it's onscreen, we'll check
+         * its horizontal position with getBoundingClientRect(), which gives
+         * an element's location relative to the viewport. */
+
+        /* Array of elements with the menu container's class */
+        var menu = $('.slide-menu');
+
         it('starts with display and visibility turned on', function() {
-            expect(menu.length).toBe(1);    // exactly one slide-menu
+            expect(menu.length).toBe(1);    // exactly one slide-menu div
             expect(menu.attr('display')).not.toBe('none');
             expect(menu.attr('visibility')).not.toBe('hidden');
         })
 
         it('starts offscreen', function () {
-            expect(isOnscreen(menu[0])).toBe(false);
+            expect(menu[0].getBoundingClientRect().right).not.toBeGreaterThan(0);
         });
 
         it('has one menu-icon-link to control it', function () {
@@ -146,7 +136,7 @@ $(function() {
          */
         describe('when clicked...', function() {
 
-            /* Set the hide toggle at first ... */
+            /* Set the menu to hidden at first ... */
             beforeAll(function () {
                 $('body').addClass('menu-hidden');
             })
@@ -176,11 +166,11 @@ $(function() {
             });
 
             it('once: shows the menu', function() {
-                expect(isOnscreen(menu[0])).toBe(true);
+                expect(menu[0].getBoundingClientRect().left).not.toBeLessThan(0);
             });
 
             it('twice: hides the menu', function() {
-                expect(isOnscreen(menu[0])).toBe(false);
+                expect(menu[0].getBoundingClientRect().right).not.toBeGreaterThan(0);
             });
         }); /* describe when clicked */
 
