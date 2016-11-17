@@ -15,20 +15,19 @@ But in this case, the base application uses a number of feeds as sources, and th
 
 ## The test suite
 
-I have built out the test suite pretty much as required. There are three areas where my choices might be a bit unusual:
+I have built out the test suite pretty much as required. There are two areas where my choices might be a bit unusual:
 
-1. For the first suite, _Each feed_, I did not build the suite to run specs against each feed. Instead, I loop through all the feeds collecting the required information and then I run the specs to report on the results. In the final suite I do build a suite (`describe()`) for each feed, but not here.
+1. For the testing in _The menu_ suite, I chose to detect whether or not the menu appears within the window's viewport, rather than only testing for whether the `menu-hidden` class is set. My argument is this: There are many ways the trigger mechanism (mouse click sets a class on the document body) could work fine but the display mechanism could break. The ultimate test is whether the user can see the menu, not the setting of an internal attribute.
 
-2. For the testing in _The menu_ suite, I chose to detect whether or not the menu appears within the window's viewport, rather than testing for whether the `menu-hidden` class is set. My argument is this: In development projects, people often get ideas about how to "improve" an activity. I had visions of all kinds of ways the trigger mechanism (mouse click sets a class on the document body) could work fine but the display mechanism could break. It was hard to make that test work, as the spec had to wait to begin long enough for the animation to finish changing the menu's location. (Of course, once I figured that out, the async tests that follow were easy.)
-
-3. To test if a feed's contents have changed, I chose to compare the actual articles displayed, rather than checking any information from the `allFeeds` list. In fact, if a feed doesn't load successfully the application continues to show the existing display, so this comparison turned out to be useful.
+2. To test if a feed's contents have changed, I chose to compare the actual articles displayed, rather than checking any information from the `allFeeds` list. In fact, if a feed doesn't load successfully the application continues to show the existing display, so this comparison turned out to be useful.
 
 **Added tests**. I added tests beyond those specified in the assignments for two reasons:
 
 1. The assignment called for error handling, to avoid "undefined variables and out-of-bound arrays." To meet this requirement, I test that:
 
 	* There is exactly one `.slide-menu` element.
-	* The menu, in addition to being located onscreen, does not have `display: none` or `visibility: hidden` set.
+	* The menu does not have `display: none` or `visibility: hidden` set.
+	* The menu has a width greater than zero.
 	* The menu has exactly one icon link to toggle its display and removal.
 
-2. A new suite of tests was added at the end, called _All feeds display at least one entry_. This suite ended up recycling many of the tests used in previous suites. It loops through the list of feeds, loads them, checks that at least one entry is displayed, and makes sure that what's displayed has changed since the last feed. This ensures that all specified feeds at least show up on the screen as expected.
+2. A new suite of tests was added at the end, called _All feeds display at least one entry_. This suite ended up recycling many of the tests used in previous suites. It loops through the list of feeds, loads them, checks that at least one entry is displayed, and makes sure that what's displayed has changed since the last feed. This ensures that all specified feeds show up on the screen as expected.

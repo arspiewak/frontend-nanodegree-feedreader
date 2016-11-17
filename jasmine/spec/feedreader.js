@@ -128,10 +128,13 @@ $(function() {
             });
 
             it('once: shows the menu', function() {
+                /* Check both the trigger mechanism and the actual display */
+                expect($('body').hasClass('menu-hidden')).toBe(false);
                 expect(menu[0].getBoundingClientRect().left).not.toBeLessThan(0);
             });
 
             it('twice: hides the menu', function() {
+                expect($('body').hasClass('menu-hidden')).toBe(true);
                 expect(menu[0].getBoundingClientRect().right).not.toBeGreaterThan(0);
             });
         }); /* describe when clicked */
