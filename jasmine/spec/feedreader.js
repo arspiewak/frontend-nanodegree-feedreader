@@ -106,11 +106,10 @@ $(function() {
          * hiding/showing of the menu element.
          */
 
-
         /* The menus's visibility toggles by sliding in and out of the
-         * viewport (to/from the left). To see if it's onscreen, we'll check
+         * viewport (from/to the left). To see if it's onscreen, we check
          * its horizontal position with getBoundingClientRect(), which gives
-         * an element's location relative to the viewport. */
+         * an element's location relative to the viewport (offscreen is <0). */
 
         /* Array of elements with the menu container's class */
         var menu = $('.slide-menu');
@@ -119,6 +118,8 @@ $(function() {
             expect(menu.length).toBe(1);    // exactly one slide-menu div
             expect(menu.attr('display')).not.toBe('none');
             expect(menu.attr('visibility')).not.toBe('hidden');
+            /* Width of the element > 0 */
+            expect(menu[0].getBoundingClientRect().width).toBeGreaterThan(0);
         })
 
         it('starts offscreen', function () {
