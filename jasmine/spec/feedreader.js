@@ -31,67 +31,28 @@ $(function() {
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
-
-        var feed, name;
-        var definedUrls = 0;
-        var nonEmptyUrls = 0;
-        for (var i = 0, len = allFeeds.length; i < len; i++) {
-            feed = allFeeds[i];
-            if (feed.url === undefined) {
-                console.log('Undefined url, feed ' + i);
-            } else {
-                definedUrls++;
-                /* If defined check for empty */
-                if (feed.url) {
-                    nonEmptyUrls++;
-                } else {
-                    console.log('Url for feed ' + i + ' is empty');
-                }
+         describe('have non-empty URLs', function () {
+            for (var i = 0, len = allFeeds.length; i < len; i++) {
+                feed = allFeeds[i];
+                it('Feed ' + i + ' has a non-empty URL', function() {
+                    expect(feed.url).toBeDefined();
+                    expect(feed.url).toBeTruthy(); /* empty test */
+                });
             }
-        }
-
-        describe('Each feed', function () {
-           it('has a defined URL', function() {
-                expect(definedUrls).toBe(len);
-            });
-            it('has a non-empty url', function() {
-                /* Note that an undefined url's not counted empty too */
-                expect(nonEmptyUrls).toBe(definedUrls);;
-            });
         });
-
 
         /* DONE: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
-
-        var feed;
-        var definedNames = 0;
-        var nonEmptyNames = 0;
-        for (var i = 0, len = allFeeds.length; i < len; i++) {
-            feed = allFeeds[i];
-            if (feed.name === undefined) {
-                console.log('Undefined name, feed ' + i );
-            } else {
-                definedNames++;
-                /* If defined check for empty */
-                if (feed.name) {
-                    nonEmptyNames++;
-                } else {
-                    console.log('Name for feed '+ i + ' is empty');
-                }
+         describe('and have non-empty names', function () {
+            for (var i = 0, len = allFeeds.length; i < len; i++) {
+                feed = allFeeds[i];
+                it('Feed ' + i + ' has a non-empty name', function() {
+                    expect(feed.name).toBeDefined();
+                    expect(feed.name).toBeTruthy(); /* empty test */
+                });
             }
-        }
-
-        describe('Each feed', function () {
-           it('has a defined name', function() {
-                expect(definedNames).toBe(len);
-            });
-            it('has a non-empty name', function() {
-                /* Note that an undefined url's not counted empty too */
-                expect(nonEmptyNames).toBe(definedNames);;
-            });
         });
 
     }); /* describe RSS feeds */
